@@ -1,3 +1,5 @@
+mod days;
+
 use actix_web::{get, web::ServiceConfig};
 use shuttle_actix_web::ShuttleActixWeb;
 
