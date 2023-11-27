@@ -6,7 +6,8 @@ mod days;
 #[shuttle_runtime::main]
 async fn main() -> ShuttleActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
     let config = move |cfg: &mut ServiceConfig| {
-        cfg.service(days::zero::hello_world);
+        cfg.service(days::zero::hello_world)
+            .service(days::zero::error);
     };
 
     Ok(config.into())
