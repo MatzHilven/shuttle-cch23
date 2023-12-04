@@ -23,7 +23,7 @@ struct ReindeerContest {
     snow_magic_power: usize,
     favorite_food: String,
     #[serde(rename = "cAnD13s_3ATeN-yesT3rdAy")]
-    buh: usize,
+    candies_eaten: usize,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
@@ -56,7 +56,7 @@ async fn part_2(deers: web::Json<Vec<ReindeerContest>>) -> impl Responder {
         .unwrap();
     let consumer = deers
         .iter()
-        .max_by(|a, b| a.buh.partial_cmp(&b.buh).unwrap())
+        .max_by(|a, b| a.candies_eaten.partial_cmp(&b.candies_eaten).unwrap())
         .unwrap();
 
     let response = ReindeerContestResponse {
