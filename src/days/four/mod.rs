@@ -44,19 +44,19 @@ async fn part_1(deers: web::Json<Vec<Reindeer>>) -> impl Responder {
 async fn part_2(deers: web::Json<Vec<ReindeerContest>>) -> impl Responder {
     let fastest = deers
         .iter()
-        .max_by(|a, b| a.speed.partial_cmp(&b.speed).unwrap())
+        .max_by(|a, b| a.speed.total_cmp(&b.speed))
         .unwrap();
     let tallest = deers
         .iter()
-        .max_by(|a, b| a.height.partial_cmp(&b.height).unwrap())
+        .max_by(|a, b| a.height.cmp(&b.height))
         .unwrap();
     let magician = deers
         .iter()
-        .max_by(|a, b| a.snow_magic_power.partial_cmp(&b.snow_magic_power).unwrap())
+        .max_by(|a, b| a.snow_magic_power.cmp(&b.snow_magic_power))
         .unwrap();
     let consumer = deers
         .iter()
-        .max_by(|a, b| a.candies_eaten.partial_cmp(&b.candies_eaten).unwrap())
+        .max_by(|a, b| a.candies_eaten.cmp(&b.candies_eaten))
         .unwrap();
 
     let response = ReindeerContestResponse {
