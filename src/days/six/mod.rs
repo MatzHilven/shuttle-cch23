@@ -1,4 +1,4 @@
-use actix_web::{HttpResponse, post, Responder, web};
+use actix_web::{post, web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
@@ -28,12 +28,16 @@ async fn part_2(string: String) -> impl Responder {
     let elf_on_a_shelf = string.matches("elf on a shelf").count();
     let shelf_with_no_elf_on_it = string.matches("shelf").count() - elf_on_a_shelf;
 
-    HttpResponse::Ok().json(ElfResponse { elf, elf_on_a_shelf, shelf_with_no_elf_on_it })
+    HttpResponse::Ok().json(ElfResponse {
+        elf,
+        elf_on_a_shelf,
+        shelf_with_no_elf_on_it,
+    })
 }
 
 #[cfg(test)]
 mod tests {
-    use actix_web::{App, test, http::header::ContentType, body};
+    use actix_web::{body, http::header::ContentType, test, App};
 
     #[actix_web::test]
     async fn test_part_1() {

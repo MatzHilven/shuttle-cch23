@@ -3,10 +3,12 @@ pub fn configure(cfg: &mut actix_web::web::ServiceConfig) {
     cfg.configure(one::configure);
     cfg.configure(four::configure);
     cfg.configure(six::configure);
+    cfg.configure(seven::configure);
 }
 
-pub mod zero;
-pub mod one;
 pub mod four;
+pub mod one;
+pub mod zero;
 
+pub mod seven;
 pub mod six;

@@ -46,10 +46,7 @@ async fn part_2(deers: web::Json<Vec<ReindeerContest>>) -> impl Responder {
         .iter()
         .max_by(|a, b| a.speed.total_cmp(&b.speed))
         .unwrap();
-    let tallest = deers
-        .iter()
-        .max_by(|a, b| a.height.cmp(&b.height))
-        .unwrap();
+    let tallest = deers.iter().max_by(|a, b| a.height.cmp(&b.height)).unwrap();
     let magician = deers
         .iter()
         .max_by(|a, b| a.snow_magic_power.cmp(&b.snow_magic_power))
