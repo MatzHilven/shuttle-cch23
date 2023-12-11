@@ -9,7 +9,7 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
     cfg.service(part_2);
 }
 
-async fn get_weight(id: u32) -> u64 {
+async fn get_weight(id: u32) -> f64 {
     let body = reqwest::get(format!("https://pokeapi.co/api/v2/pokemon/{id}"))
         .await
         .unwrap()
@@ -18,20 +18,18 @@ async fn get_weight(id: u32) -> u64 {
         .unwrap();
 
     let json: Value = serde_json::from_str(body.as_str()).unwrap();
-    let weight = json["weight"].as_u64().unwrap();
-
-    weight / 10
+    json["weight"].as_f64().unwrap()
 }
 
 #[get("/8/weight/{pokedex_number}")]
 async fn part_1(pokedex_number: web::Path<u32>) -> impl Responder {
-    HttpResponse::Ok().body(format!("{}", get_weight(pokedex_number.into_inner()).await))
+    HttpResponse::Ok().body(format!("{}", get_weight(pokedex_number.into_inner()).await / 10.0))
 }
 
 #[get("/8/drop/{pokedex_number}")]
 async fn part_2(pokedex_number: web::Path<u32>) -> impl Responder {
-    let weight = get_weight(pokedex_number.into_inner()).await as f64;
-    let momentum = (2.0 * G * HEIGHT).sqrt() * weight;
+    let weight = get_weight(pokedex_number.into_inner()).await;
+    let momentum = (2.0 * G * HEIGHT).sqrt() * weight / 10.0;
     HttpResponse::Ok().body(format!("{}", momentum))
 }
 

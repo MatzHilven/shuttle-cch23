@@ -1,5 +1,6 @@
 use actix_web::{post, web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
+use fancy_regex::Regex;
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
     // cfg.service(part_1);
@@ -25,7 +26,7 @@ struct ElfResponse {
 #[post("/6")]
 async fn part_2(string: String) -> impl Responder {
     let elf = string.matches("elf").count();
-    let elf_on_a_shelf = string.matches("elf on a shelf").count();
+    let elf_on_a_shelf = Regex::new(r"(?=(elf on a shelf))").unwrap().find_iter(&string).count();
     let shelf_with_no_elf_on_it = string.matches("shelf").count() - elf_on_a_shelf;
 
     HttpResponse::Ok().json(ElfResponse {

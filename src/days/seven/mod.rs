@@ -1,5 +1,7 @@
-use actix_web::{get, web, HttpRequest, HttpResponse, Responder};
+use std::collections::HashMap;
+use actix_web::{get, HttpRequest, HttpResponse, Responder, web};
 use base64::Engine;
+use base64::engine::general_purpose;
 use serde::{Deserialize, Serialize};
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
@@ -58,52 +60,45 @@ struct BakeCookieResponse {
     pantry: Pantry,
 }
 
+#[derive(serde::Deserialize)]
+struct Bake {
+    recipe: HashMap<String, usize>,
+    pantry: HashMap<String, usize>,
+}
+
 #[get("/7/bake")]
-async fn part_2(req: HttpRequest) -> impl Responder {
-    match req.cookie("recipe") {
-        Some(cookie) => {
-            let value = cookie.value();
-            match base64::engine::general_purpose::STANDARD.decode(value) {
-                Ok(decoded) => {
-                    let decoded = String::from_utf8(decoded).unwrap();
-                    let bake_cookie: BakeCookie = serde_json::from_str(&decoded).unwrap();
+async fn part_2(request: HttpRequest) -> impl Responder {
+    let cookie = request.cookie("recipe").unwrap();
+    let encoded = cookie.value();
 
-                    let recipe = bake_cookie.recipe;
-                    let mut pantry = bake_cookie.pantry;
+    let decoded = general_purpose::STANDARD.decode(encoded).unwrap();
+    let mut bake: Bake = serde_json::from_slice(&decoded).unwrap();
 
-                    let mut cookies = 0;
-                    loop {
-                        if recipe.flour > pantry.flour {
-                            break;
-                        }
-                        if recipe.sugar > pantry.sugar {
-                            break;
-                        }
-                        if recipe.butter > pantry.butter {
-                            break;
-                        }
-                        if recipe.baking_powder > pantry.baking_powder {
-                            break;
-                        }
-                        if recipe.chocolate_chips > pantry.chocolate_chips {
-                            break;
-                        }
-
-                        cookies += 1;
-                        pantry.flour -= recipe.flour;
-                        pantry.sugar -= recipe.sugar;
-                        pantry.butter -= recipe.butter;
-                        pantry.baking_powder -= recipe.baking_powder;
-                        pantry.chocolate_chips -= recipe.chocolate_chips;
-                    }
-
-                    HttpResponse::Ok().json(BakeCookieResponse { cookies, pantry })
-                }
-                Err(_) => HttpResponse::BadRequest().body("Invalid base64"),
+    let cookies = bake
+        .recipe
+        .iter()
+        .map(|(k, &v)| {
+            if v == 0 {
+                usize::MAX
+            } else {
+                bake.pantry.get(k).map(|&a| a / v).unwrap_or_default()
             }
+        })
+        .min()
+        .unwrap_or_default();
+
+    for (key, &value) in &bake.recipe {
+        if let Some(p) = bake.pantry.get_mut(key) {
+            *p -= cookies * value;
         }
-        None => HttpResponse::BadRequest().body("No cookie found"),
     }
+
+    HttpResponse::Ok().json(serde_json::json!(
+        {
+            "cookies": cookies,
+            "pantry": bake.pantry,
+        }
+    ))
 }
 
 #[cfg(test)]
