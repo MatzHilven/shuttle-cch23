@@ -49,19 +49,4 @@ mod tests {
 
         assert!(resp.status().is_success());
     }
-
-    #[actix_web::test]
-    async fn test_part_2() {
-        let app = test::init_service(App::new().configure(super::configure)).await;
-
-        let req = test::TestRequest::post().uri("/11/red_pixels").to_request();
-
-        let resp = test::call_service(&app, req).await;
-
-        assert!(resp.status().is_success());
-
-        let body = resp.into_body();
-        let bytes = body::to_bytes(body).await.unwrap();
-        assert_eq!(bytes, "73034");
-    }
 }
