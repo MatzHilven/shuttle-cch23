@@ -7,6 +7,7 @@ pub fn configure(cfg: &mut actix_web::web::ServiceConfig) {
     cfg.configure(eight::configure);
     cfg.configure(twelve::configure);
     cfg.configure(eleven::configure);
+    cfg.configure(thirteen::configure);
 }
 
 pub mod four;
@@ -18,3 +19,4 @@ pub mod seven;
 pub mod six;
 pub mod eleven;
 pub mod twelve;
+pub mod thirteen;
