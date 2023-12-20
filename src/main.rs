@@ -10,6 +10,10 @@ async fn main(
     local_uri = "postgres://postgres:postgres@localhost:21533/postgres"
     )] pool: PgPool,
 ) -> ShuttleActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
+
+    std::env::set_var("RUST_LOG", "info");
+    std::env::set_var("RUST_BACKTRACE", "full");
+
     let config = move |cfg: &mut ServiceConfig| {
         cfg.configure(days::configure);
         cfg.app_data(Data::new(pool.clone()));
