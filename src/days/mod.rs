@@ -10,6 +10,7 @@ pub fn configure(cfg: &mut actix_web::web::ServiceConfig) {
     cfg.configure(thirteen::configure);
     cfg.configure(fourteen::configure);
     cfg.configure(fifteen::configure);
+    cfg.configure(eighteen::configure);
 }
 
 pub mod four;
@@ -24,3 +25,4 @@ pub mod twelve;
 pub mod thirteen;
 pub mod fourteen;
 pub mod fifteen;
+pub mod eighteen;
