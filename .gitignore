@@ -4,4 +4,4 @@ Secrets*.toml
 
 /.idea
 
-.gitignore
+.env
